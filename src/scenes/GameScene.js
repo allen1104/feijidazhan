@@ -1,4 +1,16 @@
 import ObjectPool from '../utils/ObjectPool.js';
+// 常量统一管理
+const PLAYER_SPEED = 300;
+const PLAYER_REVIVE_Y = 120;
+const PLAYER_INVINCIBLE_TIME = 3000;
+const ENEMY_HP = 1;
+const BULLET_SPEED = -600;
+const ENEMY_SPAWN_DELAY = 800;
+const BULLET_SPAWN_DELAY = 200;
+const LIVES_ICON_GAP = 52;
+const LIVES_ICON_Y = 80;
+const SCORE_TEXT_X = 16;
+const SCORE_TEXT_Y = 16;
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -18,38 +30,33 @@ class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    // 加载实际资源
-    this.load.image('player', 'assets/images/me1.png');
-    this.load.image('bullet', 'assets/images/bullet1.png');
-    this.load.image('enemy', 'assets/images/enemy1.png');
-    this.load.image('bg', 'assets/images/background.png'); // 如有专用背景图请替换
-    this.load.image('life', 'assets/images/life.png'); // 加载命数图标
-  // 我方飞机摧毁动画帧
-  this.load.image('me_destroy_1', 'assets/images/me_destroy_1.png');
-  this.load.image('me_destroy_2', 'assets/images/me_destroy_2.png');
-  this.load.image('me_destroy_3', 'assets/images/me_destroy_3.png');
-  this.load.image('me_destroy_4', 'assets/images/me_destroy_4.png');
-  // 我方飞机飞行动画帧
-  this.load.image('me1', 'assets/images/me1.png');
-  this.load.image('me2', 'assets/images/me2.png');
-  // 敌方飞机摧毁动画帧
-  this.load.image('enemy1_down1', 'assets/images/enemy1_down1.png');
-  this.load.image('enemy1_down2', 'assets/images/enemy1_down2.png');
-  this.load.image('enemy1_down3', 'assets/images/enemy1_down3.png');
-  this.load.image('enemy1_down4', 'assets/images/enemy1_down4.png');
+    // 批量加载资源
+    const images = [
+      ['player', 'me1.png'], ['bullet', 'bullet1.png'], ['enemy', 'enemy1.png'], ['bg', 'background.png'], ['life', 'life.png'],
+      ['me_destroy_1', 'me_destroy_1.png'], ['me_destroy_2', 'me_destroy_2.png'], ['me_destroy_3', 'me_destroy_3.png'], ['me_destroy_4', 'me_destroy_4.png'],
+      ['me1', 'me1.png'], ['me2', 'me2.png'],
+      ['enemy1_down1', 'enemy1_down1.png'], ['enemy1_down2', 'enemy1_down2.png'], ['enemy1_down3', 'enemy1_down3.png'], ['enemy1_down4', 'enemy1_down4.png']
+    ];
+    images.forEach(([key, file]) => {
+      this.load.image(key, `assets/images/${file}`);
+    });
   }
 
   create() {
-    // 背景
     this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'bg').setOrigin(0);
-    // 玩家飞机
-    // 创建我方飞机动画
+    this.createAnimations();
+    this.createPlayer();
+    this.createUI();
+    this.createPools();
+    this.createEnemies();
+    this.registerEvents();
+    this.isGameOver = false;
+  }
+
+  createAnimations() {
     this.anims.create({
       key: 'player_fly',
-      frames: [
-        { key: 'me1' },
-        { key: 'me2' }
-      ],
+      frames: [{ key: 'me1' }, { key: 'me2' }],
       frameRate: 8,
       repeat: -1
     });
@@ -64,7 +71,6 @@ class GameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: 0
     });
-    // 敌方飞机摧毁动画
     this.anims.create({
       key: 'enemy_destroy',
       frames: [
@@ -76,26 +82,44 @@ class GameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: 0
     });
-    // 创建玩家飞机
-    this.player = this.physics.add.sprite(this.scale.width/2, this.scale.height-120, 'me1').setDepth(1);
+  }
+
+  createPlayer() {
+    this.player = this.physics.add.sprite(this.scale.width/2, this.scale.height-PLAYER_REVIVE_Y, 'me1').setDepth(1);
     this.player.setCollideWorldBounds(true);
     this.player.play('player_fly');
-    // 子弹对象池
-    this.pool = new ObjectPool(this, 'bullet', 50);
-    // 敌机组
-  // 敌机组，支持自定义属性
-  this.enemies = this.physics.add.group();
-    // 分数文本
+  }
+
+  createUI() {
     this.score = 0;
-    this.scoreText = this.add.text(16, 16, '分数: 0', { fontSize: '24px', fill: '#fff' }).setDepth(2);
-    // 命数图标，位置下移避免与分数重叠
+    this.scoreText = this.add.text(SCORE_TEXT_X, SCORE_TEXT_Y, '分数: 0', { fontSize: '24px', fill: '#fff' }).setDepth(2);
     this.lives = 3;
     this.livesIcons = [];
     for (let i = 0; i < this.lives; i++) {
-      // 间距由36调整为更大，如48，避免重叠
-      const icon = this.add.image(24 + i * 52, 80, 'player').setScale(0.5).setDepth(2);
+      const icon = this.add.image(24 + i * LIVES_ICON_GAP, LIVES_ICON_Y, 'life').setScale(0.5).setDepth(2);
       this.livesIcons.push(icon);
     }
+  }
+
+  createPools() {
+    this.pool = new ObjectPool(this, 'bullet', 50);
+  }
+
+  createEnemies() {
+    this.enemies = this.physics.add.group();
+    this.enemyEvent = this.time.addEvent({
+      delay: ENEMY_SPAWN_DELAY,
+      loop: true,
+      callback: () => {
+        const x = Phaser.Math.Between(40, this.scale.width-40);
+        const enemy = this.enemies.create(x, -40, 'enemy');
+        enemy.setVelocityY(Phaser.Math.Between(120, 200));
+        enemy.hp = ENEMY_HP;
+      }
+    });
+  }
+
+  registerEvents() {
     // 触控移动
     this.input.on('pointermove', pointer => {
       this.player.x = Phaser.Math.Clamp(pointer.x, 0, this.scale.width);
@@ -103,30 +127,18 @@ class GameScene extends Phaser.Scene {
     });
     // 自动射击
     this.shootEvent = this.time.addEvent({
-      delay: 200,
+      delay: BULLET_SPAWN_DELAY,
       loop: true,
       callback: () => {
         const bullet = this.pool.spawn(this.player.x, this.player.y-40);
-        if (bullet) bullet.setVelocityY(-600);
+        if (bullet) bullet.setVelocityY(BULLET_SPEED);
       }
     });
-    // 敌机生成
-    this.enemyEvent = this.time.addEvent({
-      delay: 800,
-      loop: true,
-      callback: () => {
-  const x = Phaser.Math.Between(40, this.scale.width-40);
-  const enemy = this.enemies.create(x, -40, 'enemy');
-  enemy.setVelocityY(Phaser.Math.Between(120, 200));
-  enemy.hp = 1; // 敌机生命值，普通敌机为1
-      }
-    });
-  // 键盘输入
-  this.cursors = this.input.keyboard.createCursorKeys();
+    // 键盘输入
+    this.cursors = this.input.keyboard.createCursorKeys();
     // 碰撞检测
     this.physics.add.overlap(this.pool.group, this.enemies, this.hitEnemy, null, this);
     this.physics.add.overlap(this.player, this.enemies, this.playerHit, null, this);
-    this.isGameOver = false;
   }
 
   hitEnemy(bullet, enemy) {
