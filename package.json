@@ -1,0 +1,24 @@
+{
+  "name": "feijidazhan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "live-server --open=index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allen1104/feijidazhan.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allen1104/feijidazhan/issues"
+  },
+  "homepage": "https://github.com/allen1104/feijidazhan#readme",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

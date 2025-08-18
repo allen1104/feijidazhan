@@ -4,12 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>飞机大战 Phaser3</title>
+  <title>飞机大战</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: #000;
+      background: linear-gradient(135deg, #232526 0%, #414345 100%);
+      font-family: 'Segoe UI', 'PingFang SC', 'Arial', sans-serif;
     }
 
     #game-container {
@@ -17,11 +20,197 @@
       height: 100vh;
       overflow: hidden;
     }
+
+    .centered-screen {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      background: rgba(30, 34, 40, 0.92);
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .card-custom {
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      width: 100%;
+      max-width: 400px;
+      padding: 32px 18px;
+      background: #fff;
+      margin: 0 8px;
+    }
+
+    @media (max-width: 600px) {
+      .card-custom {
+        max-width: 98vw;
+        padding: 18px 2vw;
+      }
+    }
+
+    .game-title {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #232526;
+      text-align: center;
+      margin-bottom: 32px;
+      letter-spacing: 2px;
+    }
+
+    .score-title {
+      font-size: 1.5rem;
+      color: #ff9800;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .btn-main {
+      background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      padding: 12px 32px;
+      cursor: pointer;
+      margin-top: 18px;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn-main:hover {
+      background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+    }
+
+    .rank-list {
+      background: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      padding: 16px;
+      margin-top: 18px;
+      min-height: 340px;
+    }
+
+    .rank-list h2 {
+      color: #ff9800;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .rank-list ol {
+      color: #232526;
+      font-size: 1.05rem;
+      padding-left: 24px;
+      margin-bottom: 0;
+    }
+
+    .rank-list li {
+      margin-bottom: 6px;
+    }
+
+    .rank-list li[style*="color: #ffd700"] {
+      background: linear-gradient(90deg, #fffbe6 0%, #ffe082 100%);
+      border-radius: 6px;
+      font-weight: bold;
+      color: #ff9800 !important;
+      padding: 2px 8px;
+    }
+
+    .modal-custom {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fffbe6;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+      padding: 28px 16px 18px 16px;
+      width: 90vw;
+      max-width: 340px;
+      text-align: center;
+      color: #ff9800;
+      font-size: 1.15rem;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      width: 100%;
+      max-width: 260px;
+      box-sizing: border-box;
+    }
+
+    #confirmNameBtn {
+      font-size: 1.2rem;
+      padding: 14px 0;
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+  </style>
   </style>
 </head>
 
 <body>
   <div id="game-container"></div>
+  <!-- 开始游戏界面 -->
+  <div id="startScreen" class="centered-screen">
+    <div class="card-custom w-100">
+      <div class="game-title">飞机大战</div>
+      <button id="startBtn" class="btn-main">开始游戏</button>
+      <div id="rankListStart" class="rank-list" style="margin-bottom:0;">
+        <h2>排行榜</h2>
+        <ol id="rankListStartItems"
+          style="width:100%;min-height:120px;display:flex;flex-direction:column;justify-content:center;"></ol>
+        <span id="rankListStartEmpty" style="color:#bbb;text-align:center;display:none;">暂无数据</span>
+        <style>
+          #rankListStartItems {
+            min-height: 300px;
+          }
+        </style>
+        <div style="width:100%;display:flex;justify-content:center;">
+          <button style="visibility:hidden;height:0;width:0;border:none;background:none;padding:0;margin:0;"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 游戏结束界面 -->
+  <div id="gameOverScreen" class="centered-screen" style="display:none;z-index:20;">
+    <div class="card-custom w-100">
+      <img src="assets/images/gameover.png" alt="游戏结束" class="img-fluid mb-3"
+        style="max-width:180px;display:block;margin:auto;" />
+      <div id="finalScore" class="score-title"></div>
+      <!-- 恭喜弹窗，仅分数进入前十时显示 -->
+      <div id="congratsModal" class="modal-custom" style="display:none;">
+        <div style="font-size:1.2rem;margin-bottom:18px;">恭喜您，打破了记录！<br>请输入姓名：</div>
+        <input id="playerNameEnd" type="text" maxlength="10" placeholder="请输入你的名字" class="form-control" />
+        <button id="confirmNameBtn" class="btn-main">确认</button>
+      </div>
+      <!-- 榜单页面 -->
+      <div id="rankListEnd" class="rank-list" style="display:none;">
+        <h2>排行榜</h2>
+        <ol id="rankListEndItems" style="width:100%;"></ol>
+        <div style="width:100%;display:flex;justify-content:center;">
+          <button id="restartBtn" class="btn-main">重新开始</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
   <script type="module" src="src/main.js"></script>
 </body>
