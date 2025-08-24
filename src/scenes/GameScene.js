@@ -129,6 +129,7 @@ class GameScene extends Phaser.Scene {
   createPlayer() {
     this.player = this.physics.add.sprite(this.scale.width/2, this.scale.height-PLAYER_REVIVE_Y, 'me1').setDepth(1);
     this.player.setCollideWorldBounds(true);
+    this.player.setScale(0.5);
     this.player.play('player_fly');
   }
 
@@ -145,6 +146,8 @@ class GameScene extends Phaser.Scene {
 
   createPools() {
     this.pool = new ObjectPool(this, 'bullet', 50);
+    // 敌方子弹池
+    this.enemyBullets = this.physics.add.group();
   }
 
   createEnemies() {
@@ -231,7 +234,6 @@ class GameScene extends Phaser.Scene {
     boss.setVelocityY(100);
     boss.hp = 20;
     boss.type = 'boss1';
-    // 随机轨迹
     const pathType = Phaser.Math.Between(1, 3);
     boss.pathType = pathType;
     boss.baseX = x;
@@ -239,16 +241,49 @@ class GameScene extends Phaser.Scene {
     if (pathType === 3) {
       boss.setVelocityX(Phaser.Math.Between(-80, 80));
     }
+    // 定时发射子弹
+    boss.shootTimer = this.time.addEvent({
+      delay: 1200,
+      loop: true,
+      callback: () => {
+        if (!boss.active) return;
+        this.shootEnemyBullets(boss, 3);
+      }
+    });
   }
 
   spawnBoss2() {
-    // 仅大boss显示预警
     this.showBossWarning('boss2');
     const x = Phaser.Math.Between(80, this.scale.width-80);
     const boss = this.enemies.create(x, -80, 'enemy3');
     boss.setVelocityY(80);
     boss.hp = 50;
     boss.type = 'boss2';
+    // 定时发射子弹
+    boss.shootTimer = this.time.addEvent({
+      delay: 900,
+      loop: true,
+      callback: () => {
+        if (!boss.active) return;
+        this.shootEnemyBullets(boss, 7);
+      }
+    });
+  }
+
+  shootEnemyBullets(boss, count) {
+    const spreadAngle = 60; // 总散射角度
+    const startAngle = -spreadAngle/2;
+    for (let i = 0; i < count; i++) {
+      const angle = startAngle + (spreadAngle/(count-1))*i;
+      const rad = Phaser.Math.DegToRad(angle);
+      const speed = 300;
+      const vx = Math.sin(rad) * speed;
+      const vy = Math.cos(rad) * speed;
+      const bullet = this.enemyBullets.create(boss.x, boss.y+40, 'bullet');
+      bullet.setVelocity(vx, vy);
+      bullet.setActive(true).setVisible(true);
+      bullet.body.enable = true;
+    }
   }
 
   registerEvents() {
@@ -404,6 +439,14 @@ class GameScene extends Phaser.Scene {
       if (bullet && bullet.active && bullet.y < -40) {
         bullet.setActive(false).setVisible(false);
         bullet.body.enable = false;
+      }
+    });
+    // 敌方子弹超出屏幕回收
+    this.enemyBullets.children.iterate(bullet => {
+      if (bullet && bullet.active && bullet.y > this.scale.height+40) {
+        bullet.setActive(false).setVisible(false);
+        bullet.body.enable = false;
+        bullet.destroy();
       }
     });
     this.updateDifficulty();
