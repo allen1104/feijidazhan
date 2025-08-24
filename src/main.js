@@ -112,7 +112,7 @@ window.onload = function() {
 
   async function fetchRankListFromAPI() {
     try {
-  const res = await fetch('http://192.168.0.2:5050/rankings');
+  const res = await fetch('http://101.126.133.7:18682/rankings');
       if (res.ok) {
         const data = await res.json();
         return data;
@@ -134,7 +134,7 @@ window.onload = function() {
       } else if (currentPlayerName) {
         player_name = currentPlayerName;
       }
-      await fetch('http://192.168.0.2:5050/game_start_logs', {
+      await fetch('http://101.126.133.7:18682/game_start_logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ player_name, ip, browser })
@@ -144,7 +144,7 @@ window.onload = function() {
 
   async function recordRanking(player_name, score) {
     try {
-  await fetch('http://192.168.0.2:5050/rankings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ player_name, score }) });
+  await fetch('http://101.126.133.7:18682/rankings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ player_name, score }) });
     } catch {}
   }
 
