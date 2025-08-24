@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang=zh-cn><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0"><title>飞机大战</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css rel=stylesheet><style>body{background:linear-gradient(135deg,#232526 0%,#414345 100%);margin:0;padding:0;font-family:Segoe UI,PingFang SC,Arial,sans-serif}#game-container{width:100vw;height:100vh;overflow:hidden}.centered-screen{z-index:10;background:#1e2228eb;justify-content:center;align-items:center;width:100vw;height:100vh;padding:0;display:flex;position:fixed;top:0;left:0;overflow-y:auto}.card-custom{background:#fff;border-radius:18px;width:100%;max-width:400px;margin:0 8px;padding:32px 18px;box-shadow:0 8px 32px #0000002e}@media (width<=600px){.card-custom{max-width:98vw;padding:18px 2vw}}.game-title{color:#232526;text-align:center;letter-spacing:2px;margin-bottom:32px;font-size:2.2rem;font-weight:700}.score-title{color:#ff9800;text-align:center;margin-bottom:18px;font-size:1.5rem;font-weight:700}.btn-main{color:#fff;cursor:pointer;background:linear-gradient(90deg,#ff9800 0%,#ffc107 100%);border:none;border-radius:8px;width:100%;margin-top:18px;padding:12px 32px;font-size:1.1rem;font-weight:700;transition:background .2s;box-shadow:0 2px 8px #0000001f}.btn-main:hover{background:linear-gradient(90deg,#ffc107 0%,#ff9800 100%)}.rank-list{background:#f8f9fa;border-radius:12px;min-height:340px;margin-top:18px;padding:16px;box-shadow:0 2px 12px #00000014}.rank-list h2{color:#ff9800;text-align:center;letter-spacing:1px;margin-bottom:10px;font-size:1.1rem}.rank-list ol{color:#232526;margin-bottom:0;padding-left:24px;font-size:1.05rem}.rank-list li{margin-bottom:6px}.rank-list li[style*="color: #ffd700"]{background:linear-gradient(90deg,#fffbe6 0%,#ffe082 100%);border-radius:6px;padding:2px 8px;font-weight:700;color:#ff9800!important}.modal-custom{text-align:center;color:#ff9800;z-index:100;background:#fffbe6;border-radius:16px;flex-direction:column;align-items:center;width:90vw;max-width:340px;padding:28px 16px 18px;font-size:1.15rem;display:flex;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 2px 12px #0000001f}.form-control{box-sizing:border-box;border-radius:8px;width:100%;max-width:260px;margin-bottom:16px;padding:12px 16px;font-size:1.2rem}#confirmNameBtn{width:100%;max-width:260px;margin:0 auto;padding:14px 0;font-size:1.2rem}</style><body>
+  <div id=game-container></div>
+  
+  <div id=startScreen class=centered-screen>
+    <div class="card-custom w-100">
+      <div class=game-title>飞机大战</div>
+      <button id=startBtn class=btn-main>开始游戏</button>
+      <div id=rankListStart class=rank-list style=margin-bottom:0>
+        <h2>排行榜</h2>
+        <ol id=rankListStartItems style=flex-direction:column;justify-content:center;width:100%;min-height:120px;display:flex></ol>
+        <span id=rankListStartEmpty style=color:#bbb;text-align:center;display:none>暂无数据</span>
+        <style>#rankListStartItems{min-height:300px}</style>
+        <div style=justify-content:center;width:100%;display:flex>
+          <button style="visibility:hidden;background:0 0;border:none;width:0;height:0;margin:0;padding:0"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id=gameOverScreen class=centered-screen style=z-index:20;display:none>
+    <div class="card-custom w-100">
+      <img src=/gameover.096defe1.png alt=游戏结束 class="img-fluid mb-3" style=max-width:180px;margin:auto;display:block>
+      <div id=finalScore class=score-title></div>
+      
+      <div id=congratsModal class=modal-custom style=display:none>
+        <div style=margin-bottom:18px;font-size:1.2rem>恭喜您，打破了记录！<br>请输入姓名：</div>
+        <input id=playerNameEnd maxlength=10 placeholder=请输入你的名字 class=form-control>
+        <button id=confirmNameBtn class=btn-main>确认</button>
+      </div>
+      
+      <div id=rankListEnd class=rank-list style=display:none>
+        <h2>排行榜</h2>
+        <ol id=rankListEndItems style=width:100%></ol>
+        <div style=justify-content:center;width:100%;display:flex>
+          <button id=restartBtn class=btn-main>重新开始</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src=https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js></script>
+  <script type=module src=/feijidazhan.ac906d9a.js></script>
+
+

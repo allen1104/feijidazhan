@@ -2,10 +2,10 @@
   "name": "feijidazhan",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "live-server --open=index.html"
+    "start": "live-server --open=index.html",
+    "build": "parcel build index.html --dist-dir dist"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/allen1104/feijidazhan#readme",
   "devDependencies": {
-    "live-server": "^1.2.2"
+    "live-server": "^1.2.2",
+    "parcel": "^2.15.4"
   }
 }

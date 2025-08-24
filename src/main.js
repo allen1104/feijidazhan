@@ -1,4 +1,39 @@
 import GameScene from './scenes/GameScene.js';
+import '../assets/images/me1.png';
+import '../assets/images/me2.png';
+import '../assets/images/life.png';
+import '../assets/images/bullet1.png';
+import '../assets/images/bullet2.png';
+import '../assets/images/enemy1.png';
+import '../assets/images/enemy1_down1.png';
+import '../assets/images/enemy1_down2.png';
+import '../assets/images/enemy1_down3.png';
+import '../assets/images/enemy1_down4.png';
+import '../assets/images/enemy2.png';
+import '../assets/images/enemy2_hit.png';
+import '../assets/images/enemy2_down1.png';
+import '../assets/images/enemy2_down2.png';
+import '../assets/images/enemy2_down3.png';
+import '../assets/images/enemy2_down4.png';
+import '../assets/images/enemy3_n1.png';
+import '../assets/images/enemy3_n2.png';
+import '../assets/images/enemy3_hit.png';
+import '../assets/images/enemy3_down1.png';
+import '../assets/images/enemy3_down2.png';
+import '../assets/images/enemy3_down3.png';
+import '../assets/images/enemy3_down4.png';
+import '../assets/images/enemy3_down5.png';
+import '../assets/images/enemy3_down6.png';
+import '../assets/images/bomb.png';
+import '../assets/images/bomb_supply.png';
+import '../assets/images/bullet_supply.png';
+import '../assets/images/background.png';
+import '../assets/images/gameover.png';
+import '../assets/images/again.png';
+import '../assets/images/pause_nor.png';
+import '../assets/images/pause_pressed.png';
+import '../assets/images/resume_nor.png';
+import '../assets/images/resume_pressed.png';
 
 window.onload = function() {
   // 处理开始游戏按钮点击，点击后初始化游戏并隐藏遮罩层

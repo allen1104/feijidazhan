@@ -43,7 +43,7 @@ class GameScene extends Phaser.Scene {
       ['enemy3_down1', 'enemy3_down1.png'], ['enemy3_down2', 'enemy3_down2.png'], ['enemy3_down3', 'enemy3_down3.png'], ['enemy3_down4', 'enemy3_down4.png'],['enemy3_down5', 'enemy3_down5.png'],['enemy3_down6', 'enemy3_down6.png']
     ];
     images.forEach(([key, file]) => {
-      this.load.image(key, `assets/images/${file}`);
+      this.load.image(key, `./assets/images/${file}`);
     });
   }
 
