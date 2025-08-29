@@ -1,39 +1,5 @@
 import GameScene from './scenes/GameScene.js';
-import '../assets/images/me1.png';
-import '../assets/images/me2.png';
-import '../assets/images/life.png';
-import '../assets/images/bullet1.png';
-import '../assets/images/bullet2.png';
-import '../assets/images/enemy1.png';
-import '../assets/images/enemy1_down1.png';
-import '../assets/images/enemy1_down2.png';
-import '../assets/images/enemy1_down3.png';
-import '../assets/images/enemy1_down4.png';
-import '../assets/images/enemy2.png';
-import '../assets/images/enemy2_hit.png';
-import '../assets/images/enemy2_down1.png';
-import '../assets/images/enemy2_down2.png';
-import '../assets/images/enemy2_down3.png';
-import '../assets/images/enemy2_down4.png';
-import '../assets/images/enemy3_n1.png';
-import '../assets/images/enemy3_n2.png';
-import '../assets/images/enemy3_hit.png';
-import '../assets/images/enemy3_down1.png';
-import '../assets/images/enemy3_down2.png';
-import '../assets/images/enemy3_down3.png';
-import '../assets/images/enemy3_down4.png';
-import '../assets/images/enemy3_down5.png';
-import '../assets/images/enemy3_down6.png';
-import '../assets/images/bomb.png';
-import '../assets/images/bomb_supply.png';
-import '../assets/images/bullet_supply.png';
-import '../assets/images/background.png';
-import '../assets/images/gameover.png';
-import '../assets/images/again.png';
-import '../assets/images/pause_nor.png';
-import '../assets/images/pause_pressed.png';
-import '../assets/images/resume_nor.png';
-import '../assets/images/resume_pressed.png';
+import { API_BASE_URL } from './config/apiConfig.js';
 
 window.onload = function() {
   // 处理开始游戏按钮点击，点击后初始化游戏并隐藏遮罩层
@@ -112,7 +78,7 @@ window.onload = function() {
 
   async function fetchRankListFromAPI() {
     try {
-  const res = await fetch('http://101.126.133.7:18682/rankings');
+  const res = await fetch(`${API_BASE_URL}/rankings`);
       if (res.ok) {
         const data = await res.json();
         return data;
@@ -134,7 +100,7 @@ window.onload = function() {
       } else if (currentPlayerName) {
         player_name = currentPlayerName;
       }
-      await fetch('http://101.126.133.7:18682/game_start_logs', {
+  await fetch(`${API_BASE_URL}/game_start_logs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ player_name, ip, browser })
@@ -144,7 +110,7 @@ window.onload = function() {
 
   async function recordRanking(player_name, score) {
     try {
-  await fetch('http://101.126.133.7:18682/rankings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ player_name, score }) });
+  await fetch(`${API_BASE_URL}/rankings`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ player_name, score }) });
     } catch {}
   }
 

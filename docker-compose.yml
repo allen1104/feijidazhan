@@ -1,0 +1,9 @@
+version: '1.0'
+services:
+  web:
+    image: feijidazhan:latest
+    build: .
+    ports:
+      - "18681:80"
+    container_name: feijidazhan
+    restart: unless-stopped

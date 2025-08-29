@@ -19,7 +19,11 @@
   },
   "homepage": "https://github.com/allen1104/feijidazhan#readme",
   "devDependencies": {
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.4",
     "live-server": "^1.2.2",
-    "parcel": "^2.15.4"
+    "parcel": "^2.15.4",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
   }
 }
